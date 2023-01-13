@@ -1,5 +1,5 @@
 import './App.css';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 
 import TodoItem from './todoItem/ToodoItem';
 import AddTask from './addTask/AddTask';
@@ -14,7 +14,7 @@ export default function App() {
   }, [])
 
   useEffect(() => {
-    if (tasks !== null) {
+    if (Array.isArray(tasks)) {
       localStorage.setItem('tasks', JSON.stringify(tasks))
     }
   }, [tasks])
@@ -32,7 +32,7 @@ export default function App() {
     }
   };
 
-  const changeCompletedStatus = (id) => {
+  const changeCompletedStatus = useCallback((id) => {
     const newTasks = tasks.map((task) => {
       if (task.id === id) {
         task.completed = !task.completed;
@@ -41,24 +41,30 @@ export default function App() {
 
     });
     setTasks(newTasks)
-  }
+  }, [tasks]);
 
-  const deleteItem = (id) => {
+  const deleteItem = useCallback((id) => {
     const newTasks = tasks.filter((task) => id !== task.id);
     setTasks(newTasks);
-  }
+  }, [tasks]);
 
   const changeFilter = (status) => setFilter(status)
 
-  const activeTasks = tasks?.filter(task => task.completed === false) || [];
-  const completedTasks = tasks?.filter(task => task.completed === true) || [];
+  const activeTasks = useMemo(() => {
+    return tasks?.filter(task => task.completed === false) || []
+  }, [tasks]);
+  const completedTasks = useMemo(() => {
+    return tasks?.filter(task => task.completed === true) || [];
+  }, [tasks]);
 
   const sortedTasks = [...activeTasks, ...completedTasks]
-  const filteredByStatus = filter === 'all' ? sortedTasks : sortedTasks.filter(task => {
-    if (task.completed == filter) {
-      return true
-    }
-  })
+  const filteredByStatus = useMemo(() => {
+    return filter === 'all' ? sortedTasks : sortedTasks.filter(task => {
+      if (task.completed == filter) {
+        return true
+      }
+    })
+  }, [filter, sortedTasks])
 
   return (
     <div >

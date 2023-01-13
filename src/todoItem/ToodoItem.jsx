@@ -1,4 +1,5 @@
 import React from "react";
+import './TodoItem.css'
 
 export default function TodoItem({ id, completed, label, changeCompletedStatus, deleteItem }) {
     const defaultStyle = {
@@ -10,14 +11,18 @@ export default function TodoItem({ id, completed, label, changeCompletedStatus, 
     }
 
     return (
-        <div className="todo-item">
-            <input
-                onChange={() => changeCompletedStatus(id)}
-                type="checkbox"
-                checked={completed}
-            />
-            <div style={completed ? crossOutStyle : defaultStyle}>{label}</div>
-            <button type="submit" onClick={() => deleteItem(id)}>Delete</button>
+        <div className="todo-item-container">
+            <div className="todo-element">
+                <input
+                    className="checkbox"
+                    onChange={() => changeCompletedStatus(id)}
+                    type="checkbox"
+                    checked={completed}
+                />
+                <div className="label" style={completed ? crossOutStyle : defaultStyle}>{label}</div>
+
+                <button className="button1 delete-button" type="submit" onClick={() => deleteItem(id)}>Delete</button>
+            </div>
         </div>
     )
 }
